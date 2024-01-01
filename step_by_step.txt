@@ -1,0 +1,269 @@
+* which virtualenv
+* virtualenv --help
+
+to initialize the virtual enviroment manually
+
+* virtualenv ~/.venv
+* source ~/.venv/bin/activate
+
+How to fix the virtual enviroment to use in a project
+
+* vim ~/.bashrc
+
+Press shift+g to go to bottom, and press the letter a
+
+Write:
+
+'''
+#Source VirtualENV
+source ~/.venv/bin/activate
+'''
+
+
+Then press ctrl+c , and write
+:wq!
+
+Now if we open a new terminal, new virtual enviroment is fixed by default
+
+
+We are going to create a scaffolding, 
+
+We create a file usign the following command:
+
+* touch Makefile
+
+Create another file where all the packages, which we want to install:
+
+* touch requirements.txt
+
+* touch hello.py
+
+* touch test_hello.py
+
+
+Fill the Makefile with the following text:
+
+'''
+install:
+	pip install --upgrade pip &&\
+		pip install -r requirements.txt
+
+test:
+	python -m pytest -vv test_hello.py
+
+format:
+	black*.py
+
+lint:
+	pylint --disable=R,C hello.py
+
+all: install lint test
+'''
+
+(In the previous code we disable WARNINGS of Recommendation and Configuration with the line write after lint  -->> pylint --disable=R,C hello.py )
+
+
+To see what is the composition of the file Makefile, write:
+
+Make + space and then press TAB
+
+
+In the file requirements.txt, write:
+
+'''
+pytest
+pytest-cov
+pylint
+black
+ipython
+'''
+
+Now, to install all the requirements, write in the terminal:
+
+make install
+
+
+Open ipython from terminal with:
+
+ipython
+
+to exit write
+exit()   
+
+
+Fill the hello.py file with:
+
+'''
+def more_hello():
+	return "hi"
+'''
+
+
+Now, since terminal after write:
+
+ipython
+
+>>
+from hello import more_hello
+>>
+more_hello()
+>>
+assert "hi" == more_hello()
+>>
+exit()
+
+
+
+Fill the test_hello.py file with:
+
+'''
+from hello import more_hello
+
+def test_more_hello():
+	assert "hi" == more_hello()
+'''
+
+Now to test the program (the test will be run is test_more_hello), we can use from terminal:
+
+make test
+
+
+Now rewrite in test_hello.py and add:
+
+'''
+from hello import more_hello
+
+def test_more_hello():
+	assert "hi" == more_hello()
+
+def test_more_hello2():
+	assert "bye" == more_hello()
+'''
+
+
+Run from terminal:
+
+make test
+
+This code will be run a error, so we need to modify hello.py and test_hello.py:
+
+hello.py
+'''
+def more_hello():
+	return "hi"
+
+def more_goodbye():
+	return "bye"
+'''
+
+
+
+test_hello.py
+'''
+from hello import more_hello, more_goodbye
+
+def test_more_hello():
+	assert "hi" == more_hello()
+
+def test_more_goodbye():
+	assert "bye" == more_goodbye()
+'''
+
+
+Now we run lint line of code allow us to see if anything is wrong or not good at all with our code, so it could help us to find errors of sintaxis:
+
+make lint
+
+
+(
+In order to see an error modify in hello.py as follows:
+
+'''
+def more_hello():
+	return "hi"
+
+def more_goodbye():
+	return "bye"
+
+# This is nonsense code that generates a warning
+var = 1
+var = var
+
+# Bad syntax
+foo =
+'''
+
+Then type in terminal:
+
+make lint
+
+Comment all the new lines in hello.py and see if there are no any mistake
+)
+
+
+Now to reformatted, write:
+
+make format
+
+
+To run all our instance in Makefile, we see the line all, so, first modify the file as:
+
+Makefile
+'''
+install:
+	pip install --upgrade pip &&\
+		pip install -r requirements.txt
+
+test:
+	python -m pytest -vv --cov=hello test_hello.py
+
+format:
+	black *.py
+
+lint:
+	pylint --disable=R,C hello.py
+
+all: install lint test format
+'''
+
+(Remark: The order how you write the commands after all: is the order of running of the code)
+
+
+To see all the version that are currently installed, write:
+
+pip freeze | less
+
+---- With the information in this we modify the requirements.txt file
+
+requirement.txt
+'''
+
+'''
+
+To upload, we run:
+
+make all
+
+
+git status
+
+git add *
+
+git commit -m "adding initial layout of python project"
+
+git push
+
+
+git pull
+
+
+
+modify the file main.yml and rename as testing-ci.yml in the path   .github/workflows/testing-ci.yml (see the video 29:40 CONTINUOUS INTEGRATION OVERVIEW)
+
+testing-ci.yml
+'''
+
+'''
+
+run again the following, from terminal:
+make test
